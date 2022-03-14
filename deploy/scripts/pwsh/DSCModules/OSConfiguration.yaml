@@ -1,0 +1,62 @@
+---
+- hosts: win
+  name: OS Configuration
+  gather_facts: true
+  vars_files:
+  tasks:
+    - name: Install NetworkingDsc & ComputerManagementDsc DSC resources on target machines
+      win_psmodule:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - NetworkingDsc
+        - ComputerManagementDsc
+
+    - name: Enable .Net3.5
+      win_dsc:
+        resource_name: WindowsFeature
+        Ensure: Present
+        Name: NET-Framework-Features
+
+    - name: Disable domain Firewall
+      win_dsc:
+        resource_name: FirewallProfile
+        Enabled: false
+        Name: Domain
+
+    - name: Disable public Firewall
+      win_dsc:
+        resource_name: FirewallProfile
+        Enabled: false
+        Name: Public
+
+    - name: Get Virtual Memory size
+      win_shell: |
+        [int](((Get-Volume -DriveLetter D).Size/1048576)-2048)
+      register: virtual_memory_size
+
+    # - name: debug
+    #   debug:
+    #     var: virtual_memory_size.stdout |int
+
+    - name: Set Paging file size
+      win_dsc:
+        resource_name: VirtualMemory
+        Type: CustomSize
+        Drive: D
+        InitialSize: "{{ virtual_memory_size.stdout |int }}"
+        MaximumSize: "{{ virtual_memory_size.stdout |int }}"
+      notify: reboot
+
+# The domain needs to be created
+    # - name: Join machine to domain
+    #   win_dsc:
+    #     resource_name: Computer
+    #     DomainName: automation.com
+    #     Name: Test-AppVM
+    #     Credential_username: "{{ ansible_user }}"
+    #     Credential_password: "{{ ansible_password }}"
+
+  # handlers:
+  # - name: reboot
+  #   win_reboot:
