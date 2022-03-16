@@ -5,7 +5,20 @@ Configuration OSConfiguration
         [Parameter(Mandatory = $true)]
         [ValidateNotNullorEmpty()]
         [System.Management.Automation.PSCredential]
-        $Credential
+        $DomainCredential,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullorEmpty()]
+        [string]$SwapDriveLetter,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullorEmpty()]
+        [string]$ComputerName,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullorEmpty()]
+        [string]$DomainName
+
     )
     
     Import-DSCResource -ModuleName NetworkingDsc
@@ -47,7 +60,7 @@ Configuration OSConfiguration
         VirtualMemory PagingSettings
         {
             Type        = 'CustomSize'
-            Drive       = 'D'
+            Drive       = $SwapDriveLetter
             InitialSize = $VirtualMemorySize
             MaximumSize = $VirtualMemorySize
         }
@@ -55,9 +68,9 @@ Configuration OSConfiguration
         #Join domain
         Computer JoinDomain
         {
-            Name       = 'Test-AppVM'
-            DomainName = 'automation.com'
-            Credential = $Credential # Credential to join to domain
+            Name       = $ComputerName
+            DomainName = $DomainName
+            Credential = $DomainCredential # Credential to join to domain
         }
     }
 }
