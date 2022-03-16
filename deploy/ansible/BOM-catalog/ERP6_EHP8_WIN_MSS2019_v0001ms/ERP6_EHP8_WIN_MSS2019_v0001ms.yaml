@@ -41,17 +41,17 @@ materials:
       url: https://softwaredownloads.sap.com/file/0020000001542832021
       path: download_basket
 
-    - name: "Patch 4 for SOFTWARE UPDATE MANAGER 2.0 SP12"
-      archive: SUM20SP12_4-80002458.SAR
-      url: https://softwaredownloads.sap.com/file/0020000001731542021
+    - name: "Patch 1 for SOFTWARE UPDATE MANAGER 2.0 SP13"
+      archive: SUM20SP13_1-80002458.SAR
+      url: https://softwaredownloads.sap.com/file/0020000000304012022
       path: download_basket
 
-    - name: "SWPM 1.0 SP33 for NW higher than 7.0x"
-      archive: SWPM10SP33_3-20009707.SAR
+    - name: "SWPM 1.0 SP34 for NW higher than 7.0x"
+      archive: SWPM10SP34_1-20009707.SAR
       override_target_filename: "SWPM.SAR"
       extract: true
       extractDir: SWPM
-      url: https://softwaredownloads.sap.com/file/0020000001808982021
+      url: https://softwaredownloads.sap.com/file/0020000000289752022
       path: download_basket
 
     - name: "Installation for SAP IGS integrated in SAP Kernel"
