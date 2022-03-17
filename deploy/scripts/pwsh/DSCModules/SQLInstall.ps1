@@ -5,7 +5,11 @@ Configuration SQLInstall
     (
         [Parameter(Mandatory = $true)]
         [ValidateNotNullorEmpty()]
-        [string]$SourcePath
+        [string]$SourcePath,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullorEmpty()]
+        [string]$DestPath
     )
 
      Import-DscResource -ModuleName SqlServerDsc
@@ -33,4 +37,4 @@ Configuration SQLInstall
 
 SQLInstall
 
-Start-DscConfiguration -Path C:\SQLInstall -Wait -Force -Verbose
+Start-DscConfiguration -Path $DestPath -Wait -Force -Verbose
