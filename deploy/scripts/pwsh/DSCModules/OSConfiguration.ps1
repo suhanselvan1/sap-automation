@@ -27,7 +27,7 @@ Configuration OSConfiguration
     
     Import-DSCResource -ModuleName NetworkingDsc
     Import-DSCResource -ModuleName ComputerManagementDsc
-    Import-DSCResource -ModuleName ComputerManagementDsc
+    Import-DscResource -ModuleName PSDesiredStateConfiguration
     Import-DSCResource -ModuleName WindowsDefender
 
     $VirtualMemorySize = [int](((Get-Volume -DriveLetter D).Size/1048576)-2048)
