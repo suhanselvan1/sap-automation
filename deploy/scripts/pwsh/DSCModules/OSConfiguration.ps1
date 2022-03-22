@@ -21,7 +21,11 @@ Configuration OSConfiguration
 
         [Parameter(Mandatory = $true)]
         [ValidateNotNullorEmpty()]
-        [string]$UsrSapPath
+        [string[]]$ExclusionPaths,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullorEmpty()]
+        [string]$VirtualMemorySizeinMB
 
     )
     
@@ -29,8 +33,6 @@ Configuration OSConfiguration
     Import-DSCResource -ModuleName ComputerManagementDsc
     Import-DscResource -ModuleName PSDesiredStateConfiguration
     Import-DSCResource -ModuleName WindowsDefender
-
-    $VirtualMemorySize = [int](((Get-Volume -DriveLetter D).Size/1048576)-2048)
 
     Node "localhost"
     {
@@ -61,8 +63,8 @@ Configuration OSConfiguration
         {
             Type        = 'CustomSize'
             Drive       = $SwapDriveLetter
-            InitialSize = $VirtualMemorySize
-            MaximumSize = $VirtualMemorySize
+            InitialSize = $VirtualMemorySizeinMB
+            MaximumSize = $VirtualMemorySizeinMB
         }
 
         #Join domain
@@ -77,7 +79,7 @@ Configuration OSConfiguration
         WindowsDefender DefenderExclusion
         {
         IsSingleInstance = 'yes'
-        ExclusionPath = ("$UsrSapPath")
+        ExclusionPath = $ExclusionPaths
         }
     }
 }
