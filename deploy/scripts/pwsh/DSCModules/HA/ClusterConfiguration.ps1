@@ -12,22 +12,13 @@ configuration ConfigureCluster
         [String]$ClusterName,
 
         [Parameter(Mandatory)]
-        [String]$NamePrefix,
-
-        [Parameter(Mandatory)]
-        [Int]$VMCount,
-
-        [Parameter(Mandatory)]
-        [String]$WitnessType,
+        [string[]]$ClusterNodeNames,
 
 	[Parameter(Mandatory)]
         [String]$ListenerIPAddress,
 
 	[Parameter(Mandatory)]
-        [Int]$ListenerProbePort1,
-
-	[Parameter(Mandatory)]
-        [Int]$ListenerProbePort2,
+        [Int]$ListenerProbePort,
 
 	[Parameter(Mandatory)]
         [String]$WitnessStorageName,
@@ -40,36 +31,43 @@ configuration ConfigureCluster
 
     [System.Management.Automation.PSCredential]$DomainCreds = New-Object System.Management.Automation.PSCredential ("$($AdminCreds.UserName)@${DomainName}", $AdminCreds.Password)
 
+    $ComputerInfo = Get-ComputerInfo
+
+    $WindowsVersion = $ComputerInfo.WindowsProductName
+
+    $CurrentClusterNode = $ClusterNodeNames[0]
+
     Node localhost
     {
 
         Script CreateCluster {
-            SetScript            = "If ('${ListenerIPAddress}' -ne '0.0.0.0') { New-Cluster -Name ${ClusterName} -Node ${env:COMPUTERNAME} -NoStorage -StaticAddress ${ListenerIPAddress} } else { New-Cluster -Name ${ClusterName} -Node ${env:COMPUTERNAME} -NoStorage }"
+            SetScript            = "If ('${WindowsVersion}' -ne 'Windows Server 2019 Datacenter') { New-Cluster -Name ${ClusterName} -Node ${CurrentClusterNode} -NoStorage -StaticAddress ${ListenerIPAddress} } else { New-Cluster -Name ${ClusterName} -Node ${CurrentClusterNode} -NoStorage }"
             TestScript           = "(Get-Cluster -ErrorAction SilentlyContinue).Name -eq '${ClusterName}'"
             GetScript            = "@{Ensure = if ((Get-Cluster -ErrorAction SilentlyContinue).Name -eq '${ClusterName}') {'Present'} else {'Absent'}}"
             PsDscRunAsCredential = $DomainCreds
         }
 
         Script ClusterIPAddress {
-            SetScript  = "Get-ClusterGroup -Name 'Cluster Group' -ErrorAction SilentlyContinue | Get-ClusterResource | Where-Object ResourceType -eq 'IP Address' -ErrorAction SilentlyContinue | Set-ClusterParameter -Name ProbePort ${ListenerProbePort2}; `$global:DSCMachineStatus = 1"
-            TestScript = "if ('${ListenerIpAddress}' -eq '0.0.0.0') { `$true } else { (Get-ClusterGroup -Name 'Cluster Group' -ErrorAction SilentlyContinue | Get-ClusterResource | Where-Object ResourceType -eq 'IP Address' -ErrorAction SilentlyContinue | Get-ClusterParameter -Name ProbePort).Value -eq ${ListenerProbePort2}}"
-            GetScript  = "@{Ensure = if ('${ListenerIpAddress}' -eq '0.0.0.0') { 'Present' } elseif ((Get-ClusterGroup -Name 'Cluster Group' -ErrorAction SilentlyContinue | Get-ClusterResource | Where-Object ResourceType -eq 'IP Address' -ErrorAction SilentlyContinue | Get-ClusterParameter -Name ProbePort).Value -eq ${ListenerProbePort2}) {'Present'} else {'Absent'}}"
+            SetScript  = "Get-ClusterGroup -Name 'Cluster Group' -ErrorAction SilentlyContinue | Get-ClusterResource | Where-Object ResourceType -eq 'IP Address' -ErrorAction SilentlyContinue | Set-ClusterParameter -Name ProbePort ${ListenerProbePort}; `$global:DSCMachineStatus = 1"
+            TestScript = "if ('${WindowsVersion}' -ne 'Windows Server 2019 Datacenter') { `$true } else { (Get-ClusterGroup -Name 'Cluster Group' -ErrorAction SilentlyContinue | Get-ClusterResource | Where-Object ResourceType -eq 'IP Address' -ErrorAction SilentlyContinue | Get-ClusterParameter -Name ProbePort).Value -eq ${ListenerProbePort}}"
+            GetScript  = "@{Ensure = if ('${WindowsVersion}' -ne 'Windows Server 2019 Datacenter') { 'Present' } elseif ((Get-ClusterGroup -Name 'Cluster Group' -ErrorAction SilentlyContinue | Get-ClusterResource | Where-Object ResourceType -eq 'IP Address' -ErrorAction SilentlyContinue | Get-ClusterParameter -Name ProbePort).Value -eq ${ListenerProbePort}) {'Present'} else {'Absent'}}"
             PsDscRunAsCredential = $DomainCreds
             DependsOn  = "[Script]CreateCluster"
         }
 
-        for ($count = 1; $count -lt $VMCount; $count++) {
+        for ($count = 1; $count -lt $ClusterNodeNames.count; $count++) {
+            $NodeName = $ClusterNodeNames[$count]
             Script "AddClusterNode_${count}" {
-                SetScript            = "Add-ClusterNode -Name ${NamePrefix}-AppVM${count} -NoStorage"
-                TestScript           = "'${NamePrefix}-AppVM${count}' -in (Get-ClusterNode).Name"
-                GetScript            = "@{Ensure = if ('${NamePrefix}-AppVM${count}' -in (Get-ClusterNode).Name) {'Present'} else {'Absent'}}"
+                SetScript            = "Add-ClusterNode -Name ${NodeName} -NoStorage"
+                TestScript           = "'${NodeName}' -in (Get-ClusterNode).Name"
+                GetScript            = "@{Ensure = if ('${NodeName}' -in (Get-ClusterNode).Name) {'Present'} else {'Absent'}}"
                 PsDscRunAsCredential = $DomainCreds
                 DependsOn            = "[Script]ClusterIPAddress"
             }
         }
 
         Script ClusterWitness {
-            SetScript  = "if ('${WitnessType}' -eq 'Cloud') { Set-ClusterQuorum -CloudWitness -AccountName ${WitnessStorageName} -AccessKey $($WitnessStorageKey.GetNetworkCredential().Password) } else { Set-ClusterQuorum -DiskWitness `$((Get-ClusterGroup -Name 'Available Storage' | Get-ClusterResource | ? ResourceType -eq 'Physical Disk' | Sort-Object Name | Select-Object -Last 1).Name) }"
+            SetScript  = "Set-ClusterQuorum -CloudWitness -AccountName ${WitnessStorageName} -AccessKey $($WitnessStorageKey.GetNetworkCredential().Password)"
             TestScript = "((Get-ClusterQuorum).QuorumResource).Count -gt 0"
             GetScript  = "@{Ensure = if (((Get-ClusterQuorum).QuorumResource).Count -gt 0) {'Present'} else {'Absent'}}"
             PsDscRunAsCredential = $DomainCreds
@@ -84,17 +82,10 @@ configuration ConfigureCluster
         }
              
         Script FirewallRuleProbePort1 {
-            SetScript  = "Remove-NetFirewallRule -DisplayName 'Failover Cluster - Probe Port 1' -ErrorAction SilentlyContinue; New-NetFirewallRule -DisplayName 'Failover Cluster - Probe Port 1' -Profile Domain -Direction Inbound -Action Allow -Enabled True -Protocol 'tcp' -LocalPort ${ListenerProbePort1}"
-            TestScript = "(Get-NetFirewallRule -DisplayName 'Failover Cluster - Probe Port 1' -ErrorAction SilentlyContinue | Get-NetFirewallPortFilter -ErrorAction SilentlyContinue).LocalPort -eq ${ListenerProbePort1}"
-            GetScript  = "@{Ensure = if ((Get-NetFirewallRule -DisplayName 'Failover Cluster - Probe Port 1' -ErrorAction SilentlyContinue | Get-NetFirewallPortFilter -ErrorAction SilentlyContinue).LocalPort -eq ${ListenerProbePort1}) {'Present'} else {'Absent'}}"
+            SetScript  = "Remove-NetFirewallRule -DisplayName 'Failover Cluster - Probe Port 1' -ErrorAction SilentlyContinue; New-NetFirewallRule -DisplayName 'Failover Cluster - Probe Port 1' -Profile Domain -Direction Inbound -Action Allow -Enabled True -Protocol 'tcp' -LocalPort ${ListenerProbePort}"
+            TestScript = "(Get-NetFirewallRule -DisplayName 'Failover Cluster - Probe Port 1' -ErrorAction SilentlyContinue | Get-NetFirewallPortFilter -ErrorAction SilentlyContinue).LocalPort -eq ${ListenerProbePort}"
+            GetScript  = "@{Ensure = if ((Get-NetFirewallRule -DisplayName 'Failover Cluster - Probe Port 1' -ErrorAction SilentlyContinue | Get-NetFirewallPortFilter -ErrorAction SilentlyContinue).LocalPort -eq ${ListenerProbePort}) {'Present'} else {'Absent'}}"
             DependsOn  = "[Script]IncreaseClusterTimeouts"
-        }
-
-        Script FirewallRuleProbePort2 {
-            SetScript  = "Remove-NetFirewallRule -DisplayName 'Failover Cluster - Probe Port 2' -ErrorAction SilentlyContinue; New-NetFirewallRule -DisplayName 'Failover Cluster - Probe Port 2' -Profile Domain -Direction Inbound -Action Allow -Enabled True -Protocol 'tcp' -LocalPort ${ListenerProbePort2}"
-            TestScript = "(Get-NetFirewallRule -DisplayName 'Failover Cluster - Probe Port 2' -ErrorAction SilentlyContinue | Get-NetFirewallPortFilter -ErrorAction SilentlyContinue).LocalPort -eq ${ListenerProbePort2}"
-            GetScript  = "@{Ensure = if ((Get-NetFirewallRule -DisplayName 'Failover Cluster - Probe Port 2' -ErrorAction SilentlyContinue | Get-NetFirewallPortFilter -ErrorAction SilentlyContinue).LocalPort -eq ${ListenerProbePort2}) {'Present'} else {'Absent'}}"
-            DependsOn  = "[Script]FirewallRuleProbePort1"
         }
 
         LocalConfigurationManager {
