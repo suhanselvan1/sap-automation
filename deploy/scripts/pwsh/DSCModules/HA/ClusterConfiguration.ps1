@@ -1,12 +1,13 @@
-configuration ConfigureCluster
+configuration ClusterConfiguration
 {
     param
     (
-        [Parameter(Mandatory)]
-        [String]$DomainName,
 
         [Parameter(Mandatory)]
         [System.Management.Automation.PSCredential]$AdminCreds,
+
+        [Parameter(Mandatory)]
+        [String]$DomainName,
 
         [Parameter(Mandatory)]
         [String]$ClusterName,
@@ -25,6 +26,7 @@ configuration ConfigureCluster
 
 	[Parameter(Mandatory)]
         [System.Management.Automation.PSCredential]$WitnessStorageKey
+        
     )
 
     Import-DscResource -ModuleName PSDesiredStateConfiguration, ComputerManagementDsc
@@ -106,6 +108,6 @@ $cd = @{
     )
 }
 
-ConfigureCluster -ConfigurationData $cd
+ClusterConfiguration -ConfigurationData $cd
 
-Start-DscConfiguration ConfigureCluster -Wait -Verbose -Force
+Start-DscConfiguration ClusterConfiguration -Wait -Verbose -Force

@@ -2,18 +2,8 @@ Configuration OSConfiguration
 {
     param
     (
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullorEmpty()]
-        [System.Management.Automation.PSCredential]
-        $DomainCredential,
-
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullorEmpty()]
-        [string]$SwapDriveLetter,
-
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullorEmpty()]
-        [string]$ComputerName,
+        [Parameter(Mandatory)]
+        [System.Management.Automation.PSCredential]$AdminCreds,
 
         [Parameter(Mandatory = $true)]
         [ValidateNotNullorEmpty()]
@@ -21,7 +11,11 @@ Configuration OSConfiguration
 
         [Parameter(Mandatory = $true)]
         [ValidateNotNullorEmpty()]
-        [string[]]$ExclusionPaths,
+        [string]$ComputerName,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullorEmpty()]
+        [string]$SwapDriveLetter,
 
         [Parameter(Mandatory = $true)]
         [ValidateNotNullorEmpty()]
@@ -29,7 +23,7 @@ Configuration OSConfiguration
 
     )
     
-    Import-DSCResource -ModuleName NetworkingDsc, ComputerManagementDsc, PSDesiredStateConfiguration, WindowsDefender
+    Import-DSCResource -ModuleName NetworkingDsc, ComputerManagementDsc, PSDesiredStateConfiguration
 
     Node "localhost"
     {
@@ -74,6 +68,33 @@ Configuration OSConfiguration
             Ensure = "Present"
         }
 
+        #Join domain
+        Computer JoinDomain
+        {
+            Name       = $ComputerName
+            DomainName = $DomainName
+            Credential = $AdminCreds
+        }
+
+        # Add registry keys to avoid network interruptions
+        Registry KeepAliveTimeRegistry
+        {
+            Ensure      = "Present"
+            Key         = "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
+            ValueName   = "KeepAliveTime"
+            ValueData   = "120000"
+            ValueType   = "Dword"
+        }
+
+        Registry KeepAliveIntervalRegistry
+        {
+            Ensure      = "Present"
+            Key         = "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
+            ValueName   = "KeepAliveInterval"
+            ValueData   = "120000"
+            ValueType   = "Dword"
+        }
+
         #Set paging file size
         VirtualMemory PagingSettings
         {
@@ -83,20 +104,6 @@ Configuration OSConfiguration
             MaximumSize = $VirtualMemorySizeinMB
         }
 
-        #Join domain
-        Computer JoinDomain
-        {
-            Name       = $ComputerName
-            DomainName = $DomainName
-            Credential = $DomainCredential # Credential to join to domain
-        }
-
-        # Configure Windows Deefender
-        WindowsDefender DefenderExclusion
-        {
-        IsSingleInstance = 'yes'
-        ExclusionPath = $ExclusionPaths
-        }
     }
 }
 
