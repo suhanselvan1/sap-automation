@@ -1,0 +1,219 @@
+##############################################################################################################################################################################################
+#                                                                                                                                                                                            #
+# Installation service 'SAP NetWeaver 7.5 > MS SQL Server > Installation > Application Server ABAP > High-Availability System > Database Instance', product id 'NW_ABAP_DB:NW750.MSS.ABAPHA' #
+#                                                                                                                                                                                            #
+##############################################################################################################################################################################################
+# IMPORTANT DO NOT DELETE!!! SAPInstDes25Hash=$LEBnRKwao6IK$DnlYKPcivPRGUJ6lwVpIuhxAPuWMlHRKbtkGP4nVmHs3UBSdikvxg/J7RRHzNablazkZCqGzifBs0Hl1Q7633rslvDJlBX3Y
+
+# Password for the Diagnostics Agent specific <dasid>adm user. Provided value may be encoded.
+# DiagnosticsAgent.dasidAdmPassword = 
+
+# Windows domain in which the Diagnostics Agent users must be created. This is an optional property (Windows only).
+# DiagnosticsAgent.domain = 
+
+# Windows only: Password for the Diagnostics Agent specific 'SAPService<DASID>' user.
+# DiagnosticsAgent.sapServiceDASIDPassword = 
+
+# Specify whether you want to decluster during the import.
+# InitDeclusteringForImport.decluster = 
+
+# Specify if you want the database to use row versioning and place no locks on data during data read. Set it to 'true' to switch READ_COMMITTED_SNAPSHOT 'ON'.
+# MSS.DBCFG.SET_READ_COMMITTED_SNAPSHOT = false
+
+# Password of database user '<sapsid>'
+MSS.DBUSER.AbapPassword = des25(+GlJJqA82y3Jh1o2CjwLO4yJQ7iEOA==)
+
+# Password of database user 'SAP<SAPSID>DB'
+MSS.DBUSER.JavaPassword = des25(Vv1TnZtcffX9lWx751LgV/qQefVG/w==)
+
+# Disk drive of the data files
+MSS.DataDrive = K:
+
+# Specify whether Software Provisioning Manager is to create ('CRE') a new database or re-use ('USE') an existing database.
+MSS.Database.Action = CRE
+
+# The expected DB size can be 'BIG', 'MEDIUM' or 'SMALL'. It determines the number of database files.
+MSS.DatabaseTShirtSize = SMALL
+
+# Using this parameter the database sizing of Software Provisioning Manager can be overridden.
+# MSS.EstimatedInitialDatabaseSize = -1
+
+# SAP INTERNAL USE ONLY
+# MSS.ForceOneDataFile = false
+
+# Disk drive of the log file
+MSS.LogDrive = K:
+
+# Max degree of parallelism to be used by the database server after data load. This value is ignored if 'MSS.ServerConfig.MaxDopConfig' is set to 'DEFAULT' mode.
+# MSS.ServerConfig.CUST_MAXDOP_AFTERLOAD = 
+
+# Max degree of parallelism to be used by the database server during data load. This value is ignored if 'MSS.ServerConfig.MaxDopConfig' is set to 'DEFAULT' mode.
+# MSS.ServerConfig.CUST_MAXDOP_DURINGLOAD = 
+
+# The default RAM size used for the configuration of min/max server memory
+# MSS.ServerConfig.DefaultRam = -1
+
+# Specify whether the database server MaxDop is to be configured to new value or run in default mode. Possible values are 'DEFAULT' or 'CUSTOM'.
+# MSS.ServerConfig.MaxDopConfig = DEFAULT
+
+# Maximum memory to be used by the database server
+# MSS.ServerConfig.MaxRamCustom = 
+
+# Specify whether the database server memory is to be changed to a new setting. Possible values are 'DEFAULT' or 'CUSTOM'. If you want database server memory to stay unchanged, set the value to 'NO_CONFIG'.
+# MSS.ServerConfig.MemoryConfig = DEFAULT
+
+# Minimum memory to be used by the database server
+# MSS.ServerConfig.MinRamCustom = 
+
+# Disables the check for existing database objects in the relevant schema.
+# MSS.Uninstall.MustCleanup = 
+
+# SAP HANA: import tasks to omit. To be used in combination with HDB_IMPORT_WITH_SDI=true.
+# NW_ABAP_Import.hdbOmitTasksForSDI = TPIV
+
+# SAP code page. Value for Unicode is: '4103' on little endian (intel), '4102' on big endian. Value for Non-Unicode is: '1100' or country specific.
+NW_ABAP_Import_Dialog.dbCodepage = 4103
+
+# Communication port for the Migration Monitor.
+# NW_ABAP_Import_Dialog.migmonComPort = 
+
+# Communication type for the Migration Monitor. Possible values are: 'EXCHANGE', 'SOCKETS', none
+# NW_ABAP_Import_Dialog.migmonComType = EXCHANGE
+
+# Exchange directory for the Migration Monitor
+# NW_ABAP_Import_Dialog.migmonExchangeDir = 
+
+# Number of parallel Migration Monitor jobs
+NW_ABAP_Import_Dialog.migmonJobNum = 3
+
+# Additional 'R3load' arguments for the LOAD phase
+NW_ABAP_Import_Dialog.migmonLoadArgs = -loadprocedure fast
+
+# Additional 'R3load' arguments for the TASK phase
+# NW_ABAP_Import_Dialog.migmonTaskArgs = 
+
+# Migration key.
+# NW_ABAP_Import_Dialog.migrationKey = 
+
+# Enables setting advanced 'R3load' options.
+# NW_ABAP_Import_Dialog.useAdvancedLoadConfig = false
+
+# Enables setting attribues for parallel export/import.
+# NW_ABAP_Import_Dialog.useParallelExportImport = false
+
+# System copy AS Java with product instance Process Integration and/or Development Infrastructure: Specify whether the target system should replace the source system. Possible values are  'true' or 'false'.
+# NW_CreateDBandLoad.movePVCforUsagePiAndDi = 
+
+# Master password
+NW_GetMasterPassword.masterPwd = des25(AxnrcBUlLlQgNmFCjwIIuTRJMFVOAw==)
+
+# Database host
+NW_MSS_DBINFO.dbhost = HA-DBS-01
+
+# Database system ID (DBSID)
+NW_MSS_DBINFO.dbsid = ABC
+
+# DEPRECATED, DO NOT USE!
+# NW_SAPCrypto.SAPCryptoFile = 
+
+# SAP INTERNAL USE ONLY
+# NW_System.installSAPHostAgent = true
+
+# DEPRECATED, DO NOT USE!
+# NW_Unpack.dbaToolsSar = 
+
+# DEPRECATED, DO NOT USE!
+# NW_Unpack.igsExeSar = 
+
+# DEPRECATED, DO NOT USE!
+# NW_Unpack.igsHelperSar = 
+
+# DEPRECATED, DO NOT USE!
+NW_Unpack.sapExeDbSar = C:/SAPMedia/SAPEXEDB_900-80002611.SAR
+
+# DEPRECATED, DO NOT USE!
+# NW_Unpack.sapExeSar = 
+
+# DEPRECATED, DO NOT USE!
+# NW_Unpack.sapJvmSar = 
+
+# DEPRECATED, DO NOT USE!
+# NW_Unpack.xs2Sar = 
+
+# SAP INTERNAL USE ONLY
+# NW_adaptProfile.templateFiles = 
+
+# ABAP message server port for connecting to the message server, leave empty for default
+# NW_checkMsgServer.abapMSPort = 
+
+# The FQDN of the system
+# NW_getFQDN.FQDN = 
+
+# SAP INTERNAL USE ONLY
+# NW_getFQDN.resolve = true
+
+# Specify whether you want to set FQDN for the system.
+# NW_getFQDN.setFQDN = true
+
+# Manual configuration and execution of Migration Monitor or manual native database copy method.
+# NW_getLoadType.importManuallyExecuted = false
+
+# The load type chosen by the user. Valid values are: 'SAP', 'STD', 'OBR', 'HCP', 'FLASHCOPY', 'MDA', 'HBR', 'SBR'
+NW_getLoadType.loadType = SAP
+
+# ABAP system is Unicode (true|false), only needed if it cannot be determined from the system.
+NW_getUnicode.isUnicode = true
+
+# Provide  'profile' directory of SAP Netweaver-based system.
+NW_readProfileDir.profileDir = \\lgautomationsa.file.core.windows.net\sapmnt\ABC\SYS\profile
+
+# Windows only: The drive to use
+NW_readProfileDir.sapdrive = K:
+
+# The folder containing all archives that have been downloaded from http://support.sap.com/swdc and are supposed to be used in this procedure
+archives.downloadBasket = C:\SAPMedia
+
+# Password of the sidadm user.
+# db2.sidAdmPassword = 
+
+# Windows only: The domain of the SAP Host Agent user
+# hostAgent.domain = 
+
+# Password for the 'sapadm' user of the SAP Host Agent
+# hostAgent.sapAdmPassword = 
+
+# Windows only: The domain of all users of this SAP system. Leave empty for default.
+# nwUsers.sapDomain = 
+
+# The delimiter for nested Organisational Units (OU). Default value is '/'.
+# nwUsers.sapDomainOU.delimiter = /
+
+# Relative to the domain path of Organisational Units (OU)
+# nwUsers.sapDomainOU.path = 
+
+# If this parameter is set to 'true', the path to one or more already existing Organisational Units (OU) has to be provided. In these OUs, domain users and groups are created by Software Provisioning Manager, if they do not already exist.
+# nwUsers.sapDomainOU.use = false
+
+# Windows only: The password of the 'SAPServiceSID' user
+# nwUsers.sapServiceSIDPassword = 
+
+# UNIX only: The user ID of the 'sapadm' user, leave empty for default. The ID is ignored if the user already exists.
+# nwUsers.sapadmUID = 
+
+# UNIX only: The group id of the 'sapsys' group, leave empty for default. The ID is ignored if the group already exists.
+# nwUsers.sapsysGID = 
+
+# UNIX only: The user id of the <sapsid>adm user, leave empty for default. The ID is ignored if the user already exists.
+# nwUsers.sidAdmUID = 
+
+# The password of the '<sapsid>adm' user
+# nwUsers.sidadmPassword = 
+
+
+SAPINST.CD.PACKAGE.RDBMS =C:\SAPMedia\51050829_3\DATA_UNITS
+
+SAPINST.CD.PACKAGE.EXP1=C:\SAPMedia\51050829_3\DATA_UNITS\EXP1\LABEL.ASC
+
+SAPINST.CD.PACKAGE.EXP2=C:\SAPMedia\51050829_3\DATA_UNITS\EXP2\LABEL.ASC
+
+SAPINST.CD.PACKAGE.EXP3=C:\SAPMedia\51050829_3\DATA_UNITS\EXP3\LABEL.ASC
