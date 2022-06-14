@@ -1,0 +1,75 @@
+##############################################################################################################################################################################################################
+#                                                                                                                                                                                                            #
+# Installation service 'SAP NetWeaver 7.5 > MS SQL Server > Installation > Application Server ABAP > High-Availability System > Additional Cluster Node', product id 'NW_SecondClusterNode:NW750.MSS.ABAPHA' #
+#                                                                                                                                                                                                            #
+##############################################################################################################################################################################################################
+# IMPORTANT DO NOT DELETE!!! SAPInstDes25Hash=$JPJcLev+gH1g$ooUvOMg2DPgyQJlhQTZY1Vdhgn/4Ho6pWzqrNjnPaARBupajf/HDQlvEn6r8VMJHFwfvqQij6TmN6yDhrGE8i7IDIBl3xPNo
+
+# Password for the Diagnostics Agent specific <dasid>adm user. Provided value may be encoded.
+# DiagnosticsAgent.dasidAdmPassword = 
+
+# Windows domain in which the Diagnostics Agent users must be created. This is an optional property (Windows only).
+# DiagnosticsAgent.domain = 
+
+# Windows only: Password for the Diagnostics Agent specific 'SAPService<DASID>' user.
+# DiagnosticsAgent.sapServiceDASIDPassword = 
+
+# SAP INTERNAL USE ONLY
+# NW_System.installSAPHostAgent = true
+
+# SAP INTERNAL USE ONLY
+# NW_adaptProfile.templateFiles = 
+
+# ABAP message server port for connecting to the message server, leave empty for default
+# NW_checkMsgServer.abapMSPort = 
+
+# ABAP system is Unicode (true|false), only needed if it cannot be determined from the system.
+NW_getUnicode.isUnicode = true
+
+# The folder containing all archives that have been downloaded from http://support.sap.com/swdc and are supposed to be used in this procedure
+archives.downloadBasket = C:\SAPMedia
+
+# Password of the sidadm user.
+db2.sidAdmPassword = des25(cchCiuDe4Lm7dSVXtMatZ1Wdg1YsiA==)
+
+# Windows only: The domain of the SAP Host Agent user
+# hostAgent.domain = 
+
+# Password for the 'sapadm' user of the SAP Host Agent
+hostAgent.sapAdmPassword = des25(wNpJUUXUzHHrlPU6nM5F0/4dQ18+yQ==)
+
+# Windows only: The domain of all users of this SAP system. Leave empty for default.
+# nwUsers.sapDomain = 
+
+# The delimiter for nested Organisational Units (OU). Default value is '/'.
+# nwUsers.sapDomainOU.delimiter = /
+
+# Relative to the domain path of Organisational Units (OU)
+# nwUsers.sapDomainOU.path = 
+
+# If this parameter is set to 'true', the path to one or more already existing Organisational Units (OU) has to be provided. In these OUs, domain users and groups are created by Software Provisioning Manager, if they do not already exist.
+# nwUsers.sapDomainOU.use = false
+
+# Windows only: The password of the 'SAPServiceSID' user
+nwUsers.sapServiceSIDPassword = des25(m2JesX7mWssv8ZK32WcYZWS5bEiwNg==)
+
+# UNIX only: The user ID of the 'sapadm' user, leave empty for default. The ID is ignored if the user already exists.
+# nwUsers.sapadmUID = 
+
+# UNIX only: The group id of the 'sapsys' group, leave empty for default. The ID is ignored if the group already exists.
+# nwUsers.sapsysGID = 
+
+# UNIX only: The user id of the <sapsid>adm user, leave empty for default. The ID is ignored if the user already exists.
+# nwUsers.sidAdmUID = 
+
+# The password of the '<sapsid>adm' user
+nwUsers.sidadmPassword = des25(AM2arbSfhTcovSingcUIBaTP4a0L+w==)
+
+# The instance number of the ERS instance. Leave empty for default.
+nw_instance_ers.ersInstanceNumber = 10
+
+# Host name of the ERS instance. It can be either the physical host name or -  in case of  high-availability system installation, - one of the virtual host names.
+nw_instance_ers.ersVirtualHostname = HA-ASCS-02
+
+# Restart (A)SCS instance during ERS installation. Default value 'true'. Possible values 'true' or 'false'. Leave empty for default.
+# nw_instance_ers.restartSCS = true
